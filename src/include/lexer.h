@@ -16,8 +16,32 @@ namespace nl {
     };
 
     extern vector< string> lex_symbols;
+    struct lex_token_builder{
+      lex_token* lex_token;
+      lex_token_builder(){}
+      static lex_token_builder* new_lex_token_builder_with_symbol(lex_symbol lex){
+	lex_token_builder* builder = new lex_token_builder();
+	builder->lex_token->symbol = symbol;
+	return builder;
+      }
+      lex_token_builder* with_string(std::string value){
+	lex_token->string_value = value;
+	return this;
+      }
+      lex_token_builder* with_number(double value) {
+	token->double_value = value;
+	return this;
+      }
+      lex_token_builder* with_id(string value) {
+	token->id_name = value;
+	return this;
+      }
 
-    class lex_token {
+      lex_token build(){
+	return this->lex_token;
+      }
+    };
+    struct lex_token {
     public:
         lex_symbol symbol;
         size_t start;
@@ -30,52 +54,25 @@ namespace nl {
 
         lex_token(lex_symbol _symbol, size_t _start, size_t _end);
 
-
-        inline static lex_token* create_string(string value) {
-            lex_token* token = new lex_token(lex_symbol::STRING);
-            token->string_value = value;
-            return token;
-        }
-
-        inline static lex_token* create_number(double value) {
-            lex_token* token = new lex_token(lex_symbol::NUMBER);
-            token->double_value = value;
-            return token;
-        }
-
-        inline static lex_token* create_id(string value) {
-            lex_token* token = new  lex_token(lex_symbol::ID);
-            token->id_name = value;
-            return token;
-        }
-
-        inline static lex_token* create_lp() {
-            lex_token* token = new lex_token(lex_symbol::LP);
-            return token;
-        }
-
-        inline static lex_token* create_rp() {
-            lex_token* token = new  lex_token(lex_symbol::RP);
-            return token;
-        }
         inline bool operator == (const lex_token &other) const {
-            if (this->symbol == other.symbol ) {
-                if (this->symbol == STRING) {
-                    return this->string_value == other.string_value;
-                } else if (this->symbol == ID) {
-                    return this->id_name == other.id_name;
-                } else if (this->symbol == NUMBER) {
-                    return this->double_value == other.double_value;
-                } else{
-                    return true;
-                }
+	  if (this->symbol != other.symbol ) {
+	    return false;
+	  }
+	  switch this->symbol{
+	    case STRING:
+	    return this->string_value == other.string_value;
+	    case ID:
+	    return this->id_name == other.id_name;
+	    case NUMBER:
+	    return this->double_value == other.double_value;
+	    case D:
+	    case B:
+	    return true;
+	    default :
+	    assert(false && "");
+	    }
+        }
 
-            }
-            return false;
-        }
-        inline bool operator != (const lex_token &other) const {
-            return this->symbol != other.symbol;
-        }
     };
 
     void lexical(string &input, vector<lex_token *> &tokens);

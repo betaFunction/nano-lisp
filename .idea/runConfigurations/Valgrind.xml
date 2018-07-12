@@ -1,8 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Valgrind" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="nanolisp-test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nanolisp" TARGET_NAME="nanolisp-test" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="nanolisp" RUN_TARGET_NAME="nanolisp-test">
-    <envs />
-    <method>
-      <option name="ToolBeforeRunTask" enabled="true" actionId="Tool_External Tools_Valgrind" />
-    </method>
-  </configuration>
-</component>
