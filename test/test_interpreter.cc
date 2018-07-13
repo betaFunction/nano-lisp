@@ -3,7 +3,7 @@
 //
 
 #include "gtest/gtest.h"
-#include "checkers.hpp"
+#include "nanolisp/checkers.hpp"
 
 using namespace std;
 

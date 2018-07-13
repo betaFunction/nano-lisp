@@ -1,6 +1,6 @@
-# Nano-lisp
+# Nano-pass-lisp
 
-Nano-lisp is a micro lisp interpreter developed in C++ and it has been conceived as toy project to learn about interpretation of programming language.
+Nano-pass-lisp is a micro lisp interpreter developed in C++ and it has been conceived as toy project to learn about interpreter of programming language.
 ~~It doesn't have a proper a Parser and Error Handling yet but they will come.~~
 
 Nano-lisp is based on a REPL which will support loading of source code in a modular way through a special form (include file) (? is there anything already).
@@ -8,8 +8,9 @@ Nano-lisp is based on a REPL which will support loading of source code in a modu
 The special form planned are 
 
 - ( **if** `condition` `true_expression` `else_expression`) conditional operator
-- ( **def** `name` `value` ) 
-- ( **defn** `name` `expression` )
+- (let ) todo
+- ( **defvar** `name` `value` ) 
+- ( **defun** `name` `expression` )
 - ( **include** `filename`)  
 - **math operators/functions** - (+ - / * %)
 - **string operators/functions** - (substring, startswith, endswith, replace, contains, compare, at)
@@ -17,5 +18,5 @@ The special form planned are
 The primitive types are
 
 - boolean
-- long
-- double
+- int64
+- string

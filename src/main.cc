@@ -1,0 +1,46 @@
+#include <iostream>
+#include <sstream>
+#include <vector>
+#include <unordered_map>
+#include "nanolisp/nanolisp.h"
+#include "nanolisp/interpreter.h"
+namespace nl {
+namespace info {
+string executable = "nanolisp";
+string fullname = "Nano Lisp";
+string version = "dancing in the dark";
+}
+
+void version() {
+  cout << info::executable << endl << "\t"
+       << " is " << info::fullname << " version '" << info::version << "'"
+       << endl;
+}
+
+void help(int argc, char **argv) { version(); }
+
+void repl() {
+  int line = 0;
+  string input_line = "start";
+  while (input_line != "end") {
+    cout << "[input|" << line << "]";
+
+    getline(cin, input_line);
+    string output_line = nl::run_interpreter(input_line);
+    cout << ">> " << output_line << endl;
+    line++;
+  }
+}
+
+int main(int argc, char **argv) {
+  if (argc == 1) {
+    version();
+    repl();
+  } else {
+    help(argc, argv);
+  }
+  return 0;
+}
+}
+
+int main(int argc, char **argv) { return nl::main(argc, argv); }
