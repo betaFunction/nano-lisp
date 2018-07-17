@@ -15,7 +15,9 @@ ostream &nl_runtime::print(ostream &os) {
   return os;
 }
 
-bool nl_runtime::isPrimitive() { return false; }
+bool nl_runtime::isPrimitive() {
+  return false;
+}
 
 nl_runtime::nl_runtime(string _id) : id(_id) {};
 
@@ -143,47 +145,41 @@ nl_expression *nanolisp_runtime::eval(nl_expression *expression) {
     return nullptr;
   } else if (expression->isPrimitive()) {
     return expression;
-  } else {
-    nl_list_expression *list_expression =
-        dynamic_cast<nl_list_expression *>(expression);
-    if (list_expression != nullptr) {
-      nl_expression *first_expression =
-          this->eval(list_expression->arguments[0]);
-      nl_runtime *fun = dynamic_cast<nl_runtime *>(first_expression);
-      if (fun != nullptr) {
-
-        auto first = list_expression->arguments.begin() + 1;
-        auto last = list_expression->arguments.end();
-        auto sub_arguments = vector<nl_expression *>(first, last);
-        IFDEBUG(cout << "running " << fun->id << " ");
-        IFDEBUG(this->print_arguments(sub_arguments));
-        IFDEBUG(cout << endl);
-        return fun->run(this, sub_arguments);
-      } else {
-        cout << "Unable to recognize a function for symbol "
-             << first_expression->toString() << endl;
-        cout << flush;
-      }
-    } else {
-      nl_id_expression *id_expression =
-          dynamic_cast<nl_id_expression *>(expression);
-      if (id_expression != nullptr) {
-        nl_expression *result = this->get(id_expression->id);
-        if (result == nullptr) {
-          cout << "Unable to recognize a symbol " << expression->toString()
-               << endl;
-          IFDEBUG(this->print_symbols());
-          return nullptr;
-        } else {
-          return result;
-        }
-      } else {
-        cout << "Unable to recognize expression. " << expression->toString()
-             << endl;
-      }
+  }else if(expression->isId()){
+    nl_id_expression *id_expression =
+      dynamic_cast<nl_id_expression *>(expression);
+    assert(id_expression!= nullptr);
+    nl_expression *result = this->get(id_expression->id);
+    if (result == nullptr) {
+      cout << "Unable to recognize a symbol "
+	   << expression->toString()
+	   << endl;
+      IFDEBUG(this->print_symbols());
+      return nullptr;
     }
+    return result;
+  }else if (!expression->isList()){
+    return nullptr;
   }
-  return expression;
+
+  nl_list_expression *list_expression =
+    dynamic_cast<nl_list_expression *>(expression);
+  assert(list_expression != nullptr);
+
+  if(!list_expression->arguments[0]->isFun()){
+    return nullptr;
+  }
+  
+  assert(list_expression->arguments[0]->isFun());
+  nl_runtime *fun = dynamic_cast<nl_runtime *>(list_expression->arguments[0]);
+  assert(fun != nullptr && "should not nullptr Unable to recognize a function for symbol");
+  auto first = list_expression->arguments.begin() + 1;
+  auto last = list_expression->arguments.end();
+  auto sub_arguments = vector<nl_expression *>(first, last);
+  IFDEBUG(cout << "running " << fun->id << " ");
+  IFDEBUG(this->print_arguments(sub_arguments));
+  IFDEBUG(cout << endl);
+  return fun->run(this, sub_arguments);
 }
 
 nanolisp_runtime *nanolisp_runtime::create() {

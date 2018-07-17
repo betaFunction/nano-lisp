@@ -12,12 +12,15 @@ string version = "dancing in the dark";
 }
 
 void version() {
-  cout << info::executable << endl << "\t"
-       << " is " << info::fullname << " version '" << info::version << "'"
-       << endl;
+  cout << info::executable << "\t"
+       << " is " << info::fullname
+       << " version '" << info::version
+       << "'" << endl;
 }
 
-void help(int argc, char **argv) { version(); }
+void help(int argc, char **argv) {
+  version();
+}
 
 void repl() {
   int line = 0;
@@ -26,21 +29,19 @@ void repl() {
     cout << "[input|" << line << "]";
 
     getline(cin, input_line);
-    string output_line = nl::run_interpreter(input_line);
+    string output_line = nl::eval_string(input_line);
     cout << ">> " << output_line << endl;
     line++;
   }
 }
+}
 
 int main(int argc, char **argv) {
   if (argc == 1) {
-    version();
-    repl();
+    nl::version();
+    nl::repl();
   } else {
-    help(argc, argv);
+    nl::help(argc, argv);
   }
   return 0;
 }
-}
-
-int main(int argc, char **argv) { return nl::main(argc, argv); }

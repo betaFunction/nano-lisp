@@ -39,7 +39,8 @@ public:
 
   void add(string identifier, nl_expression *expression);
 
-  nl_expression *get(string identifier);
+  nl_expression *get(string identifier); // only for id_expression
+
 
   nl_expression *eval(nl_expression *expression);
 

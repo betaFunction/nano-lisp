@@ -26,14 +26,14 @@ public:
   lex_symbol symbol;
   size_t start;
   size_t end;
-  double double_value;
+  int64_t number_value;
   string string_value;
   string id_name;
 
 public:
   lex_token(lex_symbol _symbol);
 
-  lex_token(lex_symbol _symbol, size_t _start, size_t _end);
+  lex_token(size_t _start, size_t _end) : start(_start), end(_end) {}
 
   inline bool operator==(const lex_token &other) const {
     if (this->symbol != other.symbol) {
@@ -45,7 +45,7 @@ public:
     case ID:
       return this->id_name == other.id_name;
     case NUMBER:
-      return this->double_value == other.double_value;
+      return this->number_value == other.number_value;
     case LP:
     case RP:
       return true;
@@ -56,44 +56,125 @@ public:
   }
 };
 
-void lexical(string &input, vector<lex_token *> &tokens);
-
 struct lex_token_builder {
-  lex_token *_token;
+  vector<lex_token> _tokens;
   lex_token_builder() {}
-  lex_token_builder &add_lp() { return *this; }
+  lex_token_builder &add_lp(size_t i) { return push_token(LP, i); }
+  lex_token_builder &add_rp(size_t i) { return push_token(RP, i); }
 
-  lex_token_builder &add_rp() { return *this; }
+  lex_token_builder &add_id(std::string v) {
+    lex_token token(0, 0);
+    token.symbol = lex_symbol::ID;
+    token.id_name = v;
+    _tokens.push_back(token);
+    return *this;
+  }
+  lex_token_builder &add_id(std::string &input, size_t start, size_t end) {
+    lex_token token(start, end);
+    token.symbol = lex_symbol::ID;
+    token.id_name = input.substr(start, end - start + 1);
+    _tokens.push_back(token);
+    return *this;
+  }
+  lex_token_builder &add_id(std::string &input, size_t start) {
+    size_t i = start + 1;
+    char c = input.at(i);
+    while (isalnum(c) || c == '_') {
+      i++;
+      c = input.at(i);
+    }
+    size_t end = i - 1;
+    return add_id(input, start, end);
+  }
 
-  lex_token_builder &add_id(std::string v) { return *this; }
+  lex_token_builder &add_string(const std::string &input) {
+    int start = 0;
+    int end = 0;
+    _tokens.push_back(lex_token(start, end));
+    assert(_tokens.back().start == start && _tokens.back().end == end);
+    return push_token(STRING, input);
+  }
 
-  lex_token_builder &add_string(std::string v) { return *this; }
+  lex_token_builder &add_string(std::string &input, size_t start) {
+    assert(input[start] == '"');
 
-  lex_token_builder &add_number(int v) { return *this; }
+    size_t i = start + 1;
+    char c = input.at(i);
+    while (c != '"') {
+      i++;
+      c = input.at(i);
+    }
+    size_t end = i;
+    return push_token(STRING, input, start, end);
+  }
+
+  size_t end() { return _tokens.back().end; }
+
+  lex_token_builder &add_number(int64_t v) {
+    _tokens.push_back(lex_token(0, 0));
+    _tokens.back().number_value = v;
+    _tokens.back().symbol = NUMBER;
+    return *this;
+  }
+  lex_token_builder &add_number(string &input, size_t start) {
+    size_t i = start + 1;
+    // char c = input.at(i);
+    for (; isdigit(input[i]) && i < input.size(); i++)
+      ;
+    size_t end = i - 1;
+
+    _tokens.push_back(lex_token(start, end));
+    _tokens.back().number_value =
+        std::stoi(input.substr(start, end - start + 1));
+    _tokens.back().symbol = NUMBER;
+    return *this;
+  }
+
+  lex_token_builder &push_token(lex_symbol s, const std::string &input) {
+    assert(_tokens.size() > 0);
+    _tokens.back().symbol = s;
+    _tokens.back().string_value = input;
+    return *this;
+  }
+
+  lex_token_builder &push_token(lex_symbol s, std::string &input, size_t start,
+                                size_t end) {
+    assert(input.size() > start + 1 && "start ");
+    if (end <= start) {
+      end = start;
+    }
+    _tokens.push_back(lex_token(start, end));
+    return push_token(s, input.substr(start + 1, end - start - 1));
+  }
+
+  lex_token_builder &push_token(lex_symbol s, size_t start) {
+    _tokens.push_back(lex_token(start, start));
+    _tokens.back().symbol = s;
+    return *this;
+  }
 
   static lex_token_builder *
   new_lex_token_builder_with_symbol(lex_symbol symbol) {
     lex_token_builder *builder = new lex_token_builder();
-    builder->_token = new lex_token(symbol);
+    // builder->_token = new lex_token(symbol);
     return builder;
   }
   lex_token_builder *with_string(std::string value) {
-    _token->string_value = value;
+    //_token->string_value = value;
     return this;
   }
   lex_token_builder *with_number(double value) {
-    _token->double_value = value;
+    //_token->double_value = value;
     return this;
   }
   lex_token_builder *with_id(string value) {
-    _token->id_name = value;
+    //_token->id_name = value;
     return this;
   }
 
-  std::vector<lex_token *> build() {
-    std::vector<lex_token *> token;
-    return token;
-  }
+  std::vector<lex_token> build() { return _tokens; }
 };
+
+vector<lex_token> lexical(string &input);
 }
 #endif // NANOLISP_LEXER_H_H

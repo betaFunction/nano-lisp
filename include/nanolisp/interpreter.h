@@ -6,6 +6,6 @@
 #define NANOLISP_INTERPRETER_H
 using namespace std;
 namespace nl {
-string run_interpreter(string &input);
+string eval_string(string &input);
 }
 #endif // NANOLISP_INTERPRETER_H

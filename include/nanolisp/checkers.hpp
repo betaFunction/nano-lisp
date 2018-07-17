@@ -13,12 +13,12 @@
 #include "interpreter.h"
 
 static bool check_lexer(bool match, std::string input,
-                        std::vector<nl::lex_token *> &expected) {
+                        std::vector<nl::lex_token> &expected) {
   return false;
 }
 
 static bool check_parser(string input,
-                         std::vector<nl::lex_token *> &expected_lexer,
+                         std::vector<nl::lex_token> &expected_lexer,
                          nl::nl_expression *expected_parser) {
   return false;
 }

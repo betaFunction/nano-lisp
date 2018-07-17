@@ -26,6 +26,20 @@ public:
   string toString();
 
   virtual string valueToString();
+  bool isId(){  // true when id_expresion
+    return false;
+  }
+
+  // true when list expression
+  bool isList(){
+    return false;
+  }
+  //true when function expression
+  bool isFun(){
+    return false;
+  }
+
+
 };
 
 class nl_number_expression : public nl_expression {

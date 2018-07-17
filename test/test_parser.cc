@@ -9,11 +9,11 @@ using namespace nl;
 
 TEST(PARSER, DEFINITION_OF_VARIABLE) {
 
-  vector<nl::lex_token *> expected_lexer =  nl::lex_token_builder()
-      .add_lp()
+  vector<nl::lex_token> expected_lexer =  nl::lex_token_builder()
+      .add_lp(0)
       .add_id("def")
       .add_number(5)
-      .add_rp()
+      .add_rp(0)
       .build();
     
     
@@ -31,15 +31,14 @@ TEST(PARSER, DEFINITION_WHICH_SHOULD_NOT_MAKE_SENSE) {
             ->addArgNumber(5)
             ->addArgString("ciao");
 
-  vector<nl::lex_token *> expected_lexer =  nl::lex_token_builder()
-      
-      .add_lp()
+  vector<nl::lex_token> expected_lexer =  nl::lex_token_builder()
+    .add_lp(0)
       .add_id("def")
       .add_id("a")
       .add_number(5)
       .add_string("ciao")
-      .add_rp()
+      .add_rp(0)
     .build();
 
-    //check_parser("(def a 5 \"ciao\")", expected_lexer, expression);
+    check_parser("(def a 5 \"ciao\")", expected_lexer, expression);
 }

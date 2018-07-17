@@ -13,7 +13,7 @@ void print_parsed(nl_expression *root) {
   cout << endl;
 }
 
-string run_interpreter(string &input) {
+string eval_string(string &input) {
   nl_expression *root = parse(input);
   print_parsed(root);
   nanolisp_runtime *runtime = nanolisp_runtime::create();

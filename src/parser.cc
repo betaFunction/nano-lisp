@@ -18,47 +18,46 @@ string nl_expression::valueToString() { return ""; }
 
 nl_string_expression::nl_string_expression(string &_value) : value(_value) {}
 
-nl_expression *parse_list(std::vector<lex_token *> &tokens, size_t *i) {
+nl_expression *parse_list(std::vector<lex_token> &tokens, size_t *i) {
   nl_list_expression *expression = new nl_list_expression;
   size_t start = *i;
   ++(*i);
   while (*i < tokens.size()) {
-    lex_token *token = tokens[*i];
-    lex_symbol symbol = token->symbol;
+    lex_token token = tokens[*i];
+    lex_symbol symbol = token.symbol;
     if (symbol == lex_symbol::LP) {
       expression->arguments.push_back(parse_list(tokens, i));
     } else if (symbol == lex_symbol::RP) {
       return expression;
     } else if (symbol == lex_symbol::ID) {
-      expression->addArgId(token->id_name);
+      expression->addArgId(token.id_name);
     } else if (symbol == lex_symbol::STRING) {
-      expression->addArgString(token->string_value);
+      expression->addArgString(token.string_value);
     } else if (symbol == lex_symbol::NUMBER) {
-      expression->addArgNumber(token->double_value);
+      expression->addArgNumber(token.number_value);
     }
     ++(*i);
   }
   cout << "Unexpectedly reached the end of tokens while parsing a list "
-          "expression started at token " << tokens[start];
+       << "expression started at token " << &tokens[start];
   return NULL;
 }
 
 nl_expression *parse(string &input) {
-  std::vector<lex_token *> tokens;
-  lexical(input, tokens);
+  std::vector<lex_token> tokens = lexical(input);
   nl_list_expression *root = new nl_list_expression;
   root->addArgId("doall");
   for (size_t i = 0; i < tokens.size(); i++) {
-    lex_token *token = tokens[i];
-    lex_symbol symbol = token->symbol;
+    lex_token token = tokens[i];
+    lex_symbol symbol = token.symbol;
     if (symbol == lex_symbol::LP) {
       root->arguments.push_back(parse_list(tokens, &i));
     } else if (symbol == lex_symbol::ID) {
-      root->arguments.push_back(new nl_id_expression(token->id_name));
+      root->arguments.push_back(new nl_id_expression(token.id_name));
     } else if (symbol == lex_symbol::STRING) {
-      root->arguments.push_back(new nl_string_expression(token->string_value));
+      root->arguments.push_back(new nl_string_expression(token.string_value));
     } else if (symbol == lex_symbol::NUMBER) {
-      root->arguments.push_back(new nl_number_expression(token->double_value));
+      root->arguments.push_back(new nl_number_expression(token.number_value));
     }
   }
   nl_expression *result;
