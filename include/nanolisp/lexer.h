@@ -1,15 +1,13 @@
 //
 // Created by Francesco Fiduccia on 11/04/16.
 //
-
-#ifndef NANOLISP_LEXER_H_H
-#define NANOLISP_LEXER_H_H
+#pragma once
 #include <cstddef>
 #include <string>
 #include <vector>
 #include <assert.h>
 #include <boost/operators.hpp>
-
+#include <iostream>
 using namespace std;
 namespace nl {
 enum lex_symbol {
@@ -20,7 +18,7 @@ enum lex_symbol {
   RP
 };
 
-extern vector<string> lex_symbols;
+
 struct lex_token : public boost::equality_comparable<lex_token> {
 public:
   lex_symbol symbol;
@@ -175,6 +173,41 @@ struct lex_token_builder {
   std::vector<lex_token> build() { return _tokens; }
 };
 
-vector<lex_token> lexical(string &input);
+static vector<string> lex_symbols{ "NUMBER", "STRING", "ID", "LP", "RP" };
+
+static vector<lex_token> lexical(string &input) {
+
+  lex_token_builder builder;
+  size_t i = 0;
+  for (size_t i = 0; i < input.length(); ++i) {
+    char c = input.at(i);
+    if (isalpha(c)) {
+      // SYMBOL
+      builder.add_id(input, i);
+      i = builder.end();
+    } else if (isdigit(c) || c == '-') {
+      // NUMBER
+      builder.add_number(input, i);
+      i = builder.end();
+    } else if (c == '"') {
+      // STRING
+      builder.add_string(input, i);
+      i = builder.end();
+    } else if (c == '(') {
+      builder.add_lp(i);
+    } else if (c == ')') {
+      builder.add_rp(i);
+    } else if (isblank(c)) {
+      // nothing to do
+    } else {
+      cout << "unrecognized character '" << c
+           << "' found in input at position: " << i << endl;
+      cout << "####" << input << "####" << input.substr(0, i) << "^" << c << "^"
+           << input.substr(i + 1, input.length()) << "####" << endl;
+      assert(false);
+    }
+  }
+  return builder.build();
+};
 }
-#endif // NANOLISP_LEXER_H_H
+

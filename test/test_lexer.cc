@@ -2,27 +2,27 @@
 // Created by crypt on 17/10/17.
 //
 #include "nanolisp/lexer.h"
-//#include "nanolisp/checkers.hpp"
-#include "gtest/gtest.h"
+#include "nanolisp/checkers.hpp"
+
 
 using namespace std;
-vector<nl::lex_token *> result{};
-void check_lexer(bool value, std::string input, vector<nl::lex_token> &  expected){
-  EXPECT_TRUE(value);
 
-  vector<nl::lex_token> result = nl::lexical(input);;
+// void check_lexer(std::string input, vector<nl::lex_token> &  expected){
+//   EXPECT_TRUE(value);
+
+//   vector<nl::lex_token> result = nl::lexical(input);;
   
-  ASSERT_EQ(result.size(), expected.size());
-  for(int i=0;i<result.size();i++){
-    if(result[i].symbol == nl::lex_symbol::STRING){
-      std::cout << result[i].string_value
-		<< ","
-		<< expected[i].string_value << std::endl;
-    }
-    ASSERT_EQ(result[i], expected[i]);
+//   ASSERT_EQ(result.size(), expected.size());
+//   for(int i=0;i<result.size();i++){
+//     if(result[i].symbol == nl::lex_symbol::STRING){
+//       std::cout << result[i].string_value
+// 		<< ","
+// 		<< expected[i].string_value << std::endl;
+//     }
+//     ASSERT_EQ(result[i], expected[i]);
     
-  }
-}
+//   }
+// }
 
 TEST(LEXER, PARENTHESIS_DUMP) {
   vector<nl::lex_token> result = nl::lex_token_builder()
@@ -31,7 +31,7 @@ TEST(LEXER, PARENTHESIS_DUMP) {
     .build();
 
   
-  check_lexer(true, "()", result);
+  check_lexer("()", result);
 }
 
 TEST(LEXER, PARENTHESIS_EQUAL) {
@@ -61,7 +61,7 @@ TEST(LEXER, PARENTHESIS_STRING) {
     .build();
 
   
-  check_lexer(true, "(\"falcon\")", result);
+  check_lexer("(\"falcon\")", result);
 }
 
 TEST(LEXER, PARENTHESIS_TWO_STRINGS) {
@@ -71,7 +71,7 @@ TEST(LEXER, PARENTHESIS_TWO_STRINGS) {
     .add_string("space-x")
     .add_rp(0)
     .build();
-  check_lexer(true, "(\"falcon\"\"space-x\")", result);
+  check_lexer( "(\"falcon\"\"space-x\")", result);
 }
 
 
@@ -85,7 +85,7 @@ TEST(LEXER, PARENTHESIS_TWO_STRINGS_ONE_NUMBER) {
     .add_rp(0)
     .build();
 
-  check_lexer(true, "(\"falcon\"\"space-x\"   123451)", result);
+  check_lexer( "(\"falcon\"\"space-x\"   123451)", result);
 }
 
 TEST(LEXER, PARANTHESIS_TWO_SYMBOLS_TWO_STRINGS_NUMBER) {
@@ -99,7 +99,7 @@ TEST(LEXER, PARANTHESIS_TWO_SYMBOLS_TWO_STRINGS_NUMBER) {
     .add_rp(0)
     .build();
 
-  check_lexer(true, "(Hello World \"falcon\"\"space-x\"   123451)", result);
+  check_lexer( "(Hello World \"falcon\"\"space-x\"   123451)", result);
 }
 
 TEST(LEXER, PARANTHESIS_TWO_LINE_STRING) {
@@ -109,7 +109,7 @@ TEST(LEXER, PARANTHESIS_TWO_LINE_STRING) {
     .add_rp(0)
     .build();
 
-  check_lexer(true, "(\"falcon\r\nsuper hero\")", result);
+  check_lexer( "(\"falcon\r\nsuper hero\")", result);
 }
 
 
@@ -119,7 +119,7 @@ TEST(LEXER, PARANTHESIS_MULTIPLE_LINES_STRING) {
     .add_string("falcon\r\nsuper\r\nhero")
     .add_rp(0)
     .build();
-  check_lexer(true, "(\"falcon\r\nsuper\r\nhero\")", result);
+  check_lexer( "(\"falcon\r\nsuper\r\nhero\")", result);
 }
 
 //

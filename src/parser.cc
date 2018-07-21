@@ -14,11 +14,13 @@ string nl_expression::toString() {
   return stream.str();
 }
 
-string nl_expression::valueToString() { return ""; }
+string nl_expression::valueToString() {
+  return "";
+}
 
-nl_string_expression::nl_string_expression(string &_value) : value(_value) {}
 
-nl_expression *parse_list(std::vector<lex_token> &tokens, size_t *i) {
+
+nl_expression *parse_list(const std::vector<lex_token> &tokens, size_t *i) {
   nl_list_expression *expression = new nl_list_expression;
   size_t start = *i;
   ++(*i);
@@ -43,10 +45,9 @@ nl_expression *parse_list(std::vector<lex_token> &tokens, size_t *i) {
   return NULL;
 }
 
-nl_expression *parse(string &input) {
-  std::vector<lex_token> tokens = lexical(input);
+nl_expression *parse(std::vector<lex_token> const& tokens){
   nl_list_expression *root = new nl_list_expression;
-  root->addArgId("doall");
+  root->addArgId("begin");
   for (size_t i = 0; i < tokens.size(); i++) {
     lex_token token = tokens[i];
     lex_symbol symbol = token.symbol;
@@ -60,6 +61,7 @@ nl_expression *parse(string &input) {
       root->arguments.push_back(new nl_number_expression(token.number_value));
     }
   }
+  
   nl_expression *result;
   if (root->arguments.size() == 2) {
     // TODO de allocate old root
@@ -72,10 +74,13 @@ nl_expression *parse(string &input) {
   }
   return result;
 }
+nl_expression *parse(string &input) {
+  return parse(lexical(input));
+}
 
-nl_number_expression::nl_number_expression(double _value) : value(_value) {}
+  
 
-nl_id_expression::nl_id_expression(string &id) : id(id) {}
+
 
 ostream &nl_list_expression::print(ostream &os) {
   os << *this;

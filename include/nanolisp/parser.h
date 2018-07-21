@@ -6,8 +6,8 @@
 #define NANOLISP_PARSER_H_H
 
 #include "lexer.h"
-#include "vector"
-#include "string"
+#include <vector>
+#include <string>
 
 using namespace std;
 namespace nl {
@@ -31,28 +31,36 @@ public:
   }
 
   // true when list expression
-  bool isList(){
+  virtual bool isList() const{
     return false;
   }
   //true when function expression
   bool isFun(){
     return false;
   }
-
+  virtual bool operator==(const nl_expression& other) =0;
 
 };
 
 class nl_number_expression : public nl_expression {
 public:
-  double value;
+  int64_t value;
 
-  nl_number_expression(double _value);
+ nl_number_expression(int64_t _value):value(_value){}
 
   ostream &print(ostream &os) override;
 
   inline bool isPrimitive() override { return true; }
-
+  
   virtual string valueToString() override;
+  
+  bool operator==(const nl_expression& other) override{
+	const nl_number_expression* number_other =(const nl_number_expression*)&other;
+	if(number_other == NULL){
+	  return false;
+	}
+	return value == number_other->value;
+  }
 };
 
 class nl_id_expression : public nl_expression {
@@ -61,11 +69,18 @@ public:
 
   ostream &print(ostream &os) override;
 
-  nl_id_expression(string &_id);
+ nl_id_expression(string &_id):id(_id){}
 
   inline bool isPrimitive() override { return false; }
 
   virtual string valueToString() override;
+  bool operator==(const nl_expression& other) override{
+	const nl_id_expression* number_other =(const nl_id_expression*)&other;
+	if(number_other == NULL){
+	  return false;
+	}
+	return id == number_other->id;
+  }
 };
 
 class nl_string_expression : public nl_expression {
@@ -74,13 +89,20 @@ public:
 
   ostream &print(ostream &os) override;
 
-  nl_string_expression(string &_value);
+ nl_string_expression(string &_value):value(_value){}
 
   inline bool isPrimitive() override {
     return true;
   };
 
   virtual string valueToString() override;
+  bool operator==(const nl_expression& other) override{
+  const nl_string_expression* number_other =(const nl_string_expression*)&other;
+	if(number_other == NULL){
+	  return false;
+	}
+	return value == number_other->value;
+  }
 };
 
 class nl_list_expression : public nl_expression {
@@ -89,6 +111,13 @@ public:
   inline bool isPrimitive() override {
     return false;
   };
+  
+  bool isList()  const  override{
+	return true;
+  }
+  inline size_t size() const {
+	return this->arguments.size();
+  }
   vector<nl_expression *> arguments;
 
   ostream &print(ostream &os) override;
@@ -108,6 +137,24 @@ public:
     return this;
   }
 
+  bool operator==(const nl_expression& other) override{
+	const nl_list_expression* number_other =(const nl_list_expression*)&other;
+	if(number_other == NULL){
+	  return false;
+	}
+	
+	if (size() != number_other->size()){
+	  return false;
+	}
+	for(int i=0;i<size();i++){
+	  if(!(*arguments[i] == *(number_other->arguments[i]))){
+		return false;
+	  }
+	}
+	return true;
+  }
+
+
   inline nl_list_expression *
   addArgListExpression(nl_list_expression *expression) {
     this->arguments.push_back(expression);
@@ -120,7 +167,9 @@ public:
   }
 };
 
-nl_expression *parse(string &input);
+ nl_expression *parse(string &input);
+ nl_expression *parse(std::vector<lex_token> const& tokens);
+
 }
 
 ostream &operator<<(ostream &os, const nl::nl_expression &exp);

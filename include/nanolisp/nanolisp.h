@@ -20,7 +20,9 @@ public:
 
   virtual nl_expression *run(nanolisp_runtime *runtime,
                              vector<nl_expression *> arguments) = 0;
-
+  bool operator==(const nl_expression& other) override{
+	return true;
+  }
   virtual ostream &print(ostream &os) override;
 
   virtual bool isPrimitive() override;
@@ -31,6 +33,10 @@ private:
   unordered_map<string, nl_expression *> symbols;
 
 public:
+  bool operator==(nl_expression const & other)  {
+	return true;
+  }
+
   nanolisp_runtime();
 
   static nanolisp_runtime *create();

@@ -97,10 +97,10 @@ public:
   }
 };
 
-class nl_doall_runtime : public nl_runtime {
+class nl_begin_runtime : public nl_runtime {
 
 public:
-  nl_doall_runtime(const string &_id) : nl_runtime(_id) {}
+  nl_begin_runtime(const string &_id) : nl_runtime(_id) {}
 
 public:
   virtual nl_expression *run(nanolisp_runtime *runtime,
@@ -116,9 +116,9 @@ public:
 };
 
 nanolisp_runtime::nanolisp_runtime() {
-  this->add(new nl_doall_runtime("doall"));
-  this->add(new nl_print_runtime("print"));
-  this->add(new nl_def_runtime("def"));
+  this->add(new nl_begin_runtime("begin"));
+  this->add(new nl_print_runtime("format"));
+  this->add(new nl_def_runtime("defun"));
   this->add(new nl_sum_runtime("sum"));
 }
 
