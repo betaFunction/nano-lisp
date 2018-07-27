@@ -171,6 +171,7 @@ struct lex_token_builder {
   }
 
   std::vector<lex_token> build() { return _tokens; }
+  
 };
 
 static vector<string> lex_symbols{ "NUMBER", "STRING", "ID", "LP", "RP" };

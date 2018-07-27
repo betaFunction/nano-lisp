@@ -6,6 +6,9 @@
 #include "parser.h"
 #include <unordered_map>
 using namespace std;
+#define IFDEBUG(...)
+
+
 namespace nl {
 string eval_string(string &input);
  
@@ -32,12 +35,6 @@ public:
 
 
 
-
-
-
-
-
- 
 class nanolisp_runtime {
 private:
   std::unordered_map<string, nl_expression *> symbols;
@@ -48,17 +45,61 @@ public:
   }
 
   nanolisp_runtime();
+  
 
-  static nanolisp_runtime *create();
+  void add(nl_runtime *runtime){
+    this->symbols[runtime->id] = runtime;
+    this->symbols["platform_" + runtime->id] = runtime;
+  }
 
-  void add(nl_runtime *runtime);
-
-  void add(string identifier, nl_expression *expression);
+  inline void add(string identifier, nl_expression *expression){
+    this->symbols[identifier] = expression;
+  }
 
   nl_expression *get(string identifier); // only for id_expression
 
 
-  nl_expression *eval(nl_expression *expression);
+  nl_expression *eval(nl_expression *expression){
+      if (expression == nullptr) {
+    return nullptr;
+  } else if (expression->isPrimitive()) {
+    return expression;
+  }else if(expression->isId()){
+    nl_id_expression *id_expression =
+      dynamic_cast<nl_id_expression *>(expression);
+    assert(id_expression!= nullptr);
+    nl_expression *result = this->get(id_expression->id);
+    if (result == nullptr) {
+      cout << "Unable to recognize a symbol "
+	   << expression->toString()
+	   << endl;
+      IFDEBUG(this->print_symbols());
+      return nullptr;
+    }
+    return result;
+  }else if (!expression->isList()){
+    return nullptr;
+  }
+
+  nl_list_expression *list_expression =
+    dynamic_cast<nl_list_expression *>(expression);
+  assert(list_expression != nullptr);
+
+  if(!list_expression->arguments[0]->isFun()){
+    return nullptr;
+  }
+  
+  assert(list_expression->arguments[0]->isFun());
+  nl_runtime *fun = dynamic_cast<nl_runtime *>(list_expression->arguments[0]);
+  assert(fun != nullptr && "should not nullptr Unable to recognize a function for symbol");
+  auto first = list_expression->arguments.begin() + 1;
+  auto last = list_expression->arguments.end();
+  auto sub_arguments = vector<nl_expression *>(first, last);
+  IFDEBUG(cout << "running " << fun->id << " ");
+  IFDEBUG(this->print_arguments(sub_arguments));
+  IFDEBUG(cout << endl);
+  return fun->run(this, sub_arguments);
+  }
   nl_expression *eval(const std::string & input){
     nl_expression * root = parse(input);
     return eval(root);

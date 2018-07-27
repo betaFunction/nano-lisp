@@ -10,9 +10,9 @@ using namespace nl;
 class QueueTest : public ::testing::Test {
 protected:
   void SetUp() override{
-    runtime = nanolisp_runtime::create();
+    
   }
-  nl::nanolisp_runtime* runtime;
+  nl::nanolisp_runtime runtime;
 };
 
 TEST_F(QueueTest, SUM_OPERATION_WITH_TWO_OPERANDS) {
@@ -27,7 +27,7 @@ TEST_F(QueueTest, SUM_OPERATION_WITH_TWO_OPERANDS) {
     nl::nl_expression* root = nl::parse(program);
     
     
-    nl::nl_expression *result = runtime->eval(root);
+    nl::nl_expression *result = runtime.eval(root);
     nl::nl_expression *expact = new nl_number_expression(11);
     ASSERT_TRUE(*result == *expact);
 
