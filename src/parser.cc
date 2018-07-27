@@ -74,7 +74,8 @@ nl_expression *parse(std::vector<lex_token> const& tokens){
   }
   return result;
 }
-nl_expression *parse(string &input) {
+
+nl_expression *parse(string const &input) {
   return parse(lexical(input));
 }
 
@@ -145,4 +146,6 @@ ostream &operator<<(ostream &os, const nl::nl_list_expression &exp) {
   return os;
 }
 
-ostream &operator<<(ostream &os, const nl::nl_expression &exp) { return os; }
+ostream &operator<<(ostream &os, const nl::nl_expression &exp) {
+  return os;
+}

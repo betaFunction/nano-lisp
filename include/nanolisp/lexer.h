@@ -67,14 +67,14 @@ struct lex_token_builder {
     _tokens.push_back(token);
     return *this;
   }
-  lex_token_builder &add_id(std::string &input, size_t start, size_t end) {
+  lex_token_builder &add_id(std::string const &input, size_t start, size_t end) {
     lex_token token(start, end);
     token.symbol = lex_symbol::ID;
     token.id_name = input.substr(start, end - start + 1);
     _tokens.push_back(token);
     return *this;
   }
-  lex_token_builder &add_id(std::string &input, size_t start) {
+  lex_token_builder &add_id(std::string const &input, size_t start) {
     size_t i = start + 1;
     char c = input.at(i);
     while (isalnum(c) || c == '_') {
@@ -93,7 +93,7 @@ struct lex_token_builder {
     return push_token(STRING, input);
   }
 
-  lex_token_builder &add_string(std::string &input, size_t start) {
+  lex_token_builder &add_string(std::string const &input, size_t start) {
     assert(input[start] == '"');
 
     size_t i = start + 1;
@@ -114,7 +114,7 @@ struct lex_token_builder {
     _tokens.back().symbol = NUMBER;
     return *this;
   }
-  lex_token_builder &add_number(string &input, size_t start) {
+  lex_token_builder &add_number(string const &input, size_t start) {
     size_t i = start + 1;
     // char c = input.at(i);
     for (; isdigit(input[i]) && i < input.size(); i++)
@@ -135,7 +135,7 @@ struct lex_token_builder {
     return *this;
   }
 
-  lex_token_builder &push_token(lex_symbol s, std::string &input, size_t start,
+  lex_token_builder &push_token(lex_symbol s, const std::string &input, size_t start,
                                 size_t end) {
     assert(input.size() > start + 1 && "start ");
     if (end <= start) {
@@ -175,7 +175,7 @@ struct lex_token_builder {
 
 static vector<string> lex_symbols{ "NUMBER", "STRING", "ID", "LP", "RP" };
 
-static vector<lex_token> lexical(string &input) {
+static vector<lex_token> lexical(const string &input) {
 
   lex_token_builder builder;
   size_t i = 0;

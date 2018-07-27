@@ -2,9 +2,7 @@
 // Created by Francesco Fiduccia on 13/04/16.
 //
 
-#ifndef NANOLISP_PARSER_H_H
-#define NANOLISP_PARSER_H_H
-
+#pragma once 
 #include "lexer.h"
 #include <vector>
 #include <string>
@@ -167,7 +165,7 @@ public:
   }
 };
 
- nl_expression *parse(string &input);
+ nl_expression *parse(const string &input);
  nl_expression *parse(std::vector<lex_token> const& tokens);
 
 }
@@ -182,4 +180,4 @@ ostream &operator<<(ostream &os, const nl::nl_string_expression &exp);
 
 ostream &operator<<(ostream &os, const nl::nl_number_expression &exp);
 
-#endif // NANOLISP_PARSER_H_H
+

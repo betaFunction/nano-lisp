@@ -4,17 +4,34 @@
 
 #include "gtest/gtest.h"
 #include "nanolisp/checkers.hpp"
-
+#include "nanolisp/interpreter.h"
 using namespace std;
+using namespace nl;
+class QueueTest : public ::testing::Test {
+protected:
+  void SetUp() override{
+    runtime = nanolisp_runtime::create();
+  }
+  nl::nanolisp_runtime* runtime;
+};
 
-// TEST(INTERPRETER, SUM_OPERATION_WITH_TWO_OPERANDS) {
-//     string program = "(def a 5)"
-//             "(def b 6)"
-//             "(print (sum a b))";
-//     string output = "11";
-//     EXPECT_TRUE(check_interpreter(program, output));
+TEST_F(QueueTest, SUM_OPERATION_WITH_TWO_OPERANDS) {
+    string program = "(defvar a 5)"
+            "(defvar b 6)"
+            "(print (sum a b))";
+    string output = "11";
 
-// }
+    
+
+    
+    nl::nl_expression* root = nl::parse(program);
+    
+    
+    nl::nl_expression *result = runtime->eval(root);
+    nl::nl_expression *expact = new nl_number_expression(11);
+    ASSERT_TRUE(*result == *expact);
+
+}
 
 // TEST(INTERPRETER, SUM_OPERATION_THREE_OPERAND_ONE_IS_ANOTHER_SUM) {
 //     string program = "(def a 5)"
@@ -47,3 +64,7 @@ using namespace std;
 //     string output = "42";
 //     EXPECT_FALSE(check_interpreter(program, output));
 // }
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

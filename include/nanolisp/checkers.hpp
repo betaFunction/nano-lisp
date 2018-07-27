@@ -1,9 +1,7 @@
 //
 // Created by crypt on 17/10/17.
 //
-
-#ifndef NANOLISP_CHECKERS_HPP
-#define NANOLISP_CHECKERS_HPP
+#pragma once
 
 //
 // Created by Francesco Fiduccia on 13/04/16.
@@ -32,8 +30,10 @@ void check_lexer(std::string input, vector<nl::lex_token> &  expected){
 void check_parser(string input,
 				  std::vector<nl::lex_token> &expected_lexer,
 				  nl::nl_list_expression *expected_expression) {
-  nl::nl_expression * result = nl::parse(expected_lexer);
+  
   check_lexer(input, expected_lexer);
+
+  nl::nl_expression * result = nl::parse(expected_lexer);
   ASSERT_TRUE(result->isList());
   nl::nl_list_expression *result1 = (nl::nl_list_expression *)result;
   
@@ -45,8 +45,14 @@ void check_parser(string input,
 
 }
 
-static bool check_interpreter(std::string &program, std::string &expected) {
-  return false;
+void check_interpreter(std::string &program, std::string &expected) {
+  // vector<nl::lex_token> result = nl::lexical(input);;
+
+  // ASSERT_FALSE(result.empty());
+
+  // nl_expression *result = runtime->eval(root);
+  // ASSERT_
+  
 }
 
-#endif // NANOLISP_CHECKERS_HPP
+

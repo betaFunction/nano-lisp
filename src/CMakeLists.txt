@@ -1,6 +1,6 @@
 
 set(CMAKE_CXX_FLAGS "-stdlib=libc++")
-add_library(nanolisp interpreter.cc nanolisp.cc lexer.cc parser.cc)
+add_library(nanolisp interpreter.cc lexer.cc parser.cc)
 #target_include_directories(nanolisp - lib INTERFACE src / include)
 
 
