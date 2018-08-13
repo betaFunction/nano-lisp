@@ -48,9 +48,6 @@ public:
   virtual nl_expression *run(nanolisp_runtime *runtime,
                              vector<nl_expression *> arguments) override {
     if (arguments.size() == 2) {
-      // nl_expression *identifier = runtime->eval(arguments[1]);
-      // if (identifier->isPrimitive()) {
-
       nl_id_expression *identifier =
           dynamic_cast<nl_id_expression *>(arguments[0]);
       if (identifier != nullptr) {
